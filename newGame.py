@@ -1,13 +1,11 @@
-from matplotlib import animation
 import pygame
-from sympy import randMatrix
-from zmq import PLAIN
 from obj.define import *
 from obj.map import *
 from obj.player import *
-from multipledispatch import dispatch
 from obj.monster import *
+from obj.start_map import *
 import random
+
 
 
 
@@ -18,7 +16,8 @@ class Program:
         #active = true: chương trình hoạt động
         self.active = True
 
-        self.MAP = map('HOME')
+        self.START_MAP = startMap()
+        self.MAP = None
 
         
         self.clock = pygame.time.Clock()
@@ -28,7 +27,10 @@ class Program:
         # New Value By Hien
         self.goku_stop = pygame.USEREVENT + 1
  
+        # Cờ chỉ vị trí đang đứng (start map hay phòng đánh quái)
+        self.is_staying_in_startMap = True
 
+        # Cờ quản lý số key đang nhấn 
         self.__key_manager__ = 0
 
     def main(self): 
@@ -122,7 +124,7 @@ class Program:
                     self.PLAYER.animationAttack()
         return True
 
-    def player_in_area(self, corn1, corn2):
+    def is_player_in_area(self, corn1, corn2):
         
         x = self.PLAYER.rect.centerx
         y = self.PLAYER.rect.centery
@@ -131,52 +133,48 @@ class Program:
                 return True
         return False
 
-    def isSwitchMap(self):
-
-        if len(self.MONSTERs) > 0:
-            return None
-        for key in self.MAP.listSwitchMap:
-            if key != None:
-                if (self.player_in_area((map.SWITCH_MAP_POSITION[key][0], map.SWITCH_MAP_POSITION[key][1]),\
-                    (map.SWITCH_MAP_POSITION[key][0] + map.SWITCH_MAP_POSITION[key][2], \
-                        map.SWITCH_MAP_POSITION[key][1] + map.SWITCH_MAP_POSITION[key][3]))):
-                    return key
-        return None
-
     def switchMap(self):
-        nextMap = self.isSwitchMap()  
-        if nextMap:
-
-            self.create_ListMonster(10)
-            self.MAP = self.MAP.go_NextMap(nextMap)
-            if nextMap == 'TOP':
-                self.PLAYER.rect.centerx = PLAYER_START_POS['BOTTOM'][0]
-                self.PLAYER.rect.centery = PLAYER_START_POS['BOTTOM'][1]
-            elif nextMap == 'RIGHT':
-                self.PLAYER.rect.centerx = PLAYER_START_POS['LEFT'][0]
-                self.PLAYER.rect.centery = PLAYER_START_POS['LEFT'][1]
-            elif nextMap == 'BOTTOM':
-                self.PLAYER.rect.centerx = PLAYER_START_POS['TOP'][0]
-                self.PLAYER.rect.centery = PLAYER_START_POS['TOP'][1]
-            elif nextMap == 'LEFT':
-                self.PLAYER.rect.centerx = PLAYER_START_POS['RIGHT'][0]
-                self.PLAYER.rect.centery = PLAYER_START_POS['RIGHT'][1]                 
-
+        # c_map là vị trí đang đứng hiện tại 
+        c_map = None
+        if self.is_staying_in_startMap:
+            c_map = self.START_MAP
+        else:
+            c_map = self.MAP
+        
+        # Nếu đặt chân lên switch thì chuyển map
+        for switch in c_map.LIST_SWITCH:
+            # Nếu đặt chân lên switch
+            if self.is_player_in_area((switch.x, switch.y), (switch.x + SWITCH_SIZE, switch.y+SWITCH_SIZE)):     
+                #Nếu đang ở start map
+                if self.is_staying_in_startMap:
+                    del self.MAP
+                    self.MAP = map('HOME')
+                    self.create_ListMonster(randint(1,5))
+                    self.is_staying_in_startMap = False  
+                else:  # Nếu đang trong phòng đánh quái
+                    self.is_staying_in_startMap = True
+                c_map.removeSwitch(switch)
+        del c_map 
+     
     def update(self):
         #check switch map -> new map, player.new position
         self.switchMap()
 
         #update map => background, link switch map
-        backdrop = self.MAP.update()
+        if self.is_staying_in_startMap:
+            backdrop= self.START_MAP.update()
+            self.WORLD.blit(backdrop, self.backdropbox)
+            for switch in self.START_MAP.LIST_SWITCH:
+                self.WORLD.blit(switch.SWITCH_IMG, (switch.x, switch.y))
         
-        #Draw map
-        self.WORLD.blit(backdrop, self.backdropbox)
-
-        #draw link switch map
-        for key in self.MAP.listSwitchMap:
-            #if key: pygame.draw.rect(self.WORLD, (0,0,0), map.SWITCH_MAP_POSITION[key])
-            if key:
-                self.WORLD.blit(map.SWITCH_MAP_IMG, (map.SWITCH_MAP_POSITION[key][0], map.SWITCH_MAP_POSITION[key][1]))
+        else: # Đang ở map đánh quái
+            backdrop = self.MAP.update()
+            self.WORLD.blit(backdrop, self.backdropbox)
+            if len(self.MONSTERs) <= 0 and len(self.MAP.LIST_SWITCH) <= 0:
+                self.MAP.createSwitch()
+            for switch in self.MAP.LIST_SWITCH:
+                self.WORLD.blit(switch.SWITCH_IMG, (switch.x, switch.y))
+            
 
         #update player => player.rect
         self.PLAYER.update()
@@ -188,7 +186,7 @@ class Program:
         #self.WORLD.blit(self.PLAYER.image, self.PLAYER.rect)
         self.PLAYERs.draw(self.WORLD)
         self.MONSTERs.draw(self.WORLD)
-        pygame.time.delay(10)
+        pygame.time.delay(20)
         
         #update new screena
         pygame.display.flip()
@@ -197,8 +195,8 @@ class Program:
     def create_newPlayer(self):
         pygame.time.set_timer(self.goku_stop, 100)
         self.PLAYER = Player("assets/img/goku01.png", [100, 100])
-        self.PLAYER.rect.centerx = PLAYER_START_POS['BOTTOM'][0]  # go to x
-        self.PLAYER.rect.centery = PLAYER_START_POS['BOTTOM'][1]  # go to y
+        self.PLAYER.rect.x = PLAYER_START_POS['x']  # go to x
+        self.PLAYER.rect.y = PLAYER_START_POS['y']  # go to y
         self.PLAYERs.add(self.PLAYER)
 
     def create_ListMonster(self, total):

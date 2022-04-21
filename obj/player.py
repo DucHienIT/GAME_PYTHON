@@ -1,13 +1,6 @@
-from hashlib import new
-from re import S
-from tkinter import CENTER
-from numpy import imag
 import pygame
-from sympy import centroid
 from obj.define import *
 from obj.map import *
-from multipledispatch import dispatch
-
 class Player(pygame.sprite.Sprite):
     steps = DEFAULT_STEPS
 
@@ -43,40 +36,40 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (position[0], position[1]))
 
         # Image Stop
-        self.AddImage("assets/img/goku01.png", 3)
-        self.AddImage("assets/img/goku02.png", 3)
-        self.AddImage("assets/img/goku03.png", 3)
-        self.AddImage("assets/img/goku04.png", 3)
-        self.AddImage("assets/img/goku05.png", 3)
-        self.AddImage("assets/img/goku06.png", 3)
+        self.AddImage("./assets/img/goku01.png", 3)
+        self.AddImage("./assets/img/goku02.png", 3)
+        self.AddImage("./assets/img/goku03.png", 3)
+        self.AddImage("./assets/img/goku04.png", 3)
+        self.AddImage("./assets/img/goku05.png", 3)
+        self.AddImage("./assets/img/goku06.png", 3)
 
         # Image Run
-        self.AddImage("assets/img/goku_run01.png", 0)
-        self.AddImage("assets/img/goku_run02.png", 0)
-        self.AddImage("assets/img/goku_run03.png", 0)
-        self.AddImage("assets/img/goku_run04.png", 0)
-        self.AddImage("assets/img/goku_run05.png", 0)
-        self.AddImage("assets/img/goku_run06.png", 0)
-        self.AddImage("assets/img/goku_run07.png", 0)
-        self.AddImage("assets/img/goku_run08.png", 0)
+        self.AddImage("./assets/img/goku_run01.png", 0)
+        self.AddImage("./assets/img/goku_run02.png", 0)
+        self.AddImage("./assets/img/goku_run03.png", 0)
+        self.AddImage("./assets/img/goku_run04.png", 0)
+        self.AddImage("./assets/img/goku_run05.png", 0)
+        self.AddImage("./assets/img/goku_run06.png", 0)
+        self.AddImage("./assets/img/goku_run07.png", 0)
+        self.AddImage("./assets/img/goku_run08.png", 0)
 
-        self.AddImage("assets/img/goku_atk01.png", 2)
-        self.AddImage("assets/img/goku_atk02.png", 2)
-        self.AddImage("assets/img/goku_atk03.png", 2)
-        self.AddImage("assets/img/goku_atk04.png", 2)
-        self.AddImage("assets/img/goku_atk05.png", 2)
-        self.AddImage("assets/img/goku_atk06.png", 2)
-        self.AddImage("assets/img/goku_atk07.png", 2)
-        self.AddImage("assets/img/goku_atk08.png", 2)
-        self.AddImage("assets/img/goku_atk09.png", 2)
-        self.AddImage("assets/img/goku_atk10.png", 2)
-        self.AddImage("assets/img/goku_atk11.png", 2)
-        self.AddImage("assets/img/goku_atk12.png", 2)
-        self.AddImage("assets/img/goku_atk13.png", 2)
-        self.AddImage("assets/img/goku_atk14.png", 2)
-        self.AddImage("assets/img/goku_atk15.png", 2)
-        self.AddImage("assets/img/goku_atk16.png", 2)
-        self.AddImage("assets/img/goku_atk17.png", 2)
+        self.AddImage("./assets/img/goku_atk01.png", 2)
+        self.AddImage("./assets/img/goku_atk02.png", 2)
+        self.AddImage("./assets/img/goku_atk03.png", 2)
+        self.AddImage("./assets/img/goku_atk04.png", 2)
+        self.AddImage("./assets/img/goku_atk05.png", 2)
+        self.AddImage("./assets/img/goku_atk06.png", 2)
+        self.AddImage("./assets/img/goku_atk07.png", 2)
+        self.AddImage("./assets/img/goku_atk08.png", 2)
+        self.AddImage("./assets/img/goku_atk09.png", 2)
+        self.AddImage("./assets/img/goku_atk10.png", 2)
+        self.AddImage("./assets/img/goku_atk11.png", 2)
+        self.AddImage("./assets/img/goku_atk12.png", 2)
+        self.AddImage("./assets/img/goku_atk13.png", 2)
+        self.AddImage("./assets/img/goku_atk14.png", 2)
+        self.AddImage("./assets/img/goku_atk15.png", 2)
+        self.AddImage("./assets/img/goku_atk16.png", 2)
+        self.AddImage("./assets/img/goku_atk17.png", 2)
     
     def AddImage(self, path, action):
         pygame.sprite.Sprite.__init__(self)
@@ -94,7 +87,6 @@ class Player(pygame.sprite.Sprite):
         else:
             self.images.append(img)
 
-
     def control(self, x, y):
         self.movex += x
         self.movey += y
@@ -108,7 +100,6 @@ class Player(pygame.sprite.Sprite):
         if self.rect.y + y < 0 or self.rect.y + y > WORLD_Y - PLAYER_SIZE_Y:
             return False
         return True    
-
 
     def animationRun(self):
         self.isRun = True
@@ -169,12 +160,8 @@ class Player(pygame.sprite.Sprite):
                     self.rect.x -= 10
 
         self.image = pygame.transform.scale(new_Image, (size_tmpX, size_tmpY))
-           
-
         if self.right == False:
             self.image = pygame.transform.flip(self.image, True, False)
-        
-
 
     def update(self):
         if self.hp <= 0:
@@ -201,8 +188,6 @@ class Player(pygame.sprite.Sprite):
                 self.image = pygame.transform.flip(self.image, True, False)
                 self.right = True
 
-    def infomationPlayer_InScreen(self):
-        pass
 
         
 

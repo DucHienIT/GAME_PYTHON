@@ -1,12 +1,6 @@
-from asyncio import events
-import imp
-from tkinter import CENTER
-from numpy import imag
 import pygame
-from sympy import centroid
 from obj.define import *
 from obj.map import *
-from multipledispatch import dispatch
 import random
 
 class Monster(pygame.sprite.Sprite):
@@ -22,8 +16,6 @@ class Monster(pygame.sprite.Sprite):
         list_tmp = [True, False, True, False]
         self.right = random.choice(list_tmp)
 
-       
-
         self.images = []
         img = pygame.image.load(path)
         img = pygame.transform.scale(img, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
@@ -34,14 +26,11 @@ class Monster(pygame.sprite.Sprite):
         else:
             self.movex = -3
         
-
         img.convert_alpha()  # optimise alpha
         img.set_colorkey(ALPHA)  # set alpha
 
         self.image = img
         self.rect = self.image.get_rect(center = (position[0], position[1]))
-        
-
     
     def AddImage(self, path, action):
         pygame.sprite.Sprite.__init__(self)
@@ -59,7 +48,6 @@ class Monster(pygame.sprite.Sprite):
         else:
             self.images.append(img)
 
-
     def control(self, x, y):
         self.movex += x
         self.movey += y
@@ -74,7 +62,6 @@ class Monster(pygame.sprite.Sprite):
             return False
         return True    
         
-
     def update(self):
         
         if (self.isMovableX(self.movex)):
