@@ -1,4 +1,5 @@
 import pygame
+from sympy import false
 from obj.define import *
 from obj.map import *
 class Player(pygame.sprite.Sprite):

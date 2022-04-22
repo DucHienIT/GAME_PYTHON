@@ -65,51 +65,50 @@ class Program:
                     return False
                 if event.key == pygame.K_LEFT or event.key == ord('a'):
                     self.PLAYER.control(-Player.steps, 0)
-                    self.PLAYER.isRun = True
                     self.PLAYER.isAttack = False
                     self.PLAYER.animationRun()
-                    
+                    self.__key_manager__ += 1
                 if event.key == pygame.K_RIGHT or event.key == ord('d'):
                     self.PLAYER.control(Player.steps, 0)
-                    self.PLAYER.isRun = True
                     self.PLAYER.isAttack = False
                     self.PLAYER.animationRun()
-
+                    self.__key_manager__ += 1
                 if event.key == pygame.K_UP or event.key == ord('w'):
                     self.PLAYER.control(0, -Player.steps)
                     self.PLAYER.isAttack = False
                     self.PLAYER.animationRun()
+                    self.__key_manager__ += 1
                 if event.key == pygame.K_DOWN or event.key == ord('s'):
                     self.PLAYER.control(0, Player.steps)
                     self.PLAYER.isAttack = False
                     self.PLAYER.animationRun()
+                    self.__key_manager__ += 1
 
-                self.__key_manager__ += 1
 
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == ord('a'):
                     self.PLAYER.control(Player.steps, 0)
-                    self.PLAYER.isRun = False
                     self.PLAYER.goku_Run_Index = 0
-
+                    self.__key_manager__ -= 1
                 if event.key == pygame.K_RIGHT or event.key == ord('d'):
                     self.PLAYER.control(-Player.steps, 0)
-                    self.PLAYER.isRun = False
                     self.PLAYER.goku_Run_Index = 0
-
+                    self.__key_manager__ -= 1
                 if event.key == pygame.K_UP or event.key == ord('w'):
                     self.PLAYER.control(0, Player.steps)
-                    self.PLAYER.isRun = False
                     self.PLAYER.goku_Run_Index = 0
+                    self.__key_manager__ -= 1
                 if event.key == pygame.K_DOWN or event.key == ord('s'):
                     self.PLAYER.control(0, -Player.steps)
-                    self.PLAYER.isRun = False
                     self.PLAYER.goku_Run_Index = 0
-                self.__key_manager__ -= 1
+                    self.__key_manager__ -= 1
 
+            elif self.__key_manager__ > 0: 
+                self.PLAYER.isRun = True
             elif self.__key_manager__ == 0:
                 self.PLAYER.movex = 0
                 self.PLAYER.movey = 0
+                self.PLAYER.isRun = False
             
             if event.type == self.goku_stop:
                 if self.PLAYER.isAttack == False:

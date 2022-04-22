@@ -13,7 +13,6 @@ class startMap:
 
     def createSwitch(self):
         unit = int(WORLD_X/self.no_SWITCH)
-        print(unit)
         for i in range(0, self.no_SWITCH):
             x = randint(unit*i, unit*(i+1)-SWITCH_SIZE)
             y = randint(0, WORLD_Y-SWITCH_SIZE*2)

@@ -1,7 +1,5 @@
 import pygame
-from random import randint
 from obj.define import *
-from obj.monster import *
 from obj.switch import *
 
 class map:
