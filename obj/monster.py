@@ -62,7 +62,21 @@ class Monster(pygame.sprite.Sprite):
             return False
         return True    
         
-    def update(self):
+    def update(self, pos_PlayerX, pos_PlayerY):
+
+        if self.rect.x < pos_PlayerX:
+            self.movex = 2
+        elif self.rect.x > pos_PlayerX:
+            self.movex = -2
+        else:
+            self.movex = 0
+
+        if self.rect.y < pos_PlayerY:
+            self.movey = 2
+        elif self.rect.y > pos_PlayerY:
+            self.movey = -2
+        else:
+            self.movey = 0
         
         if (self.isMovableX(self.movex)):
             self.rect.x = self.rect.x + self.movex

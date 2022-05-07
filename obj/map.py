@@ -11,6 +11,7 @@ class map:
 
     def __init__(self, currentMap_string):
         self.currentMap = self.MAP_IMAGE[currentMap_string]
+        
 
     def createSwitch(self):
         self.LIST_SWITCH.append(switch((WORLD_X-PLAYER_SIZE_X)/2,WORLD_Y-PLAYER_SIZE_Y*2))
@@ -20,4 +21,13 @@ class map:
 
     def update(self):
         return self.currentMap
+
+  
+        
+    
+
+            
+
+    
+
 

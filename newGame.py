@@ -1,3 +1,5 @@
+from json import load
+from time import time
 import pygame
 from obj.define import *
 from obj.map import *
@@ -5,9 +7,6 @@ from obj.player import *
 from obj.monster import *
 from obj.start_map import *
 import random
-
-
-
 
 
 
@@ -19,11 +18,12 @@ class Program:
         self.START_MAP = startMap()
         self.MAP = None
 
-        
+        self.isSwitchMap = False
         self.clock = pygame.time.Clock()
         self.PLAYERs = pygame.sprite.Group()
         self.MONSTERs = pygame.sprite.Group()
 
+        self.i = 0
         # New Value By Hien
         self.goku_stop = pygame.USEREVENT + 1
  
@@ -143,9 +143,11 @@ class Program:
         # Nếu đặt chân lên switch thì chuyển map
         for switch in c_map.LIST_SWITCH:
             # Nếu đặt chân lên switch
-            if self.is_player_in_area((switch.x, switch.y), (switch.x + SWITCH_SIZE, switch.y+SWITCH_SIZE)):     
+            if self.is_player_in_area((switch.x, switch.y), (switch.x + SWITCH_SIZE, switch.y+SWITCH_SIZE)): 
+                self.isSwitchMap = True   
                 #Nếu đang ở start map
                 if self.is_staying_in_startMap:
+                    
                     del self.MAP
                     self.MAP = map('HOME')
                     self.create_ListMonster(randint(1,5))
@@ -158,41 +160,49 @@ class Program:
     def update(self):
         #check switch map -> new map, player.new position
         self.switchMap()
-
+        if self.isSwitchMap == True:
+            
+            self.WORLD.blit(list_Image[self.i], self.backdropbox)
+            if self.i < 10:
+                self.i += 1
+            else:
+                self.i = 0
+                self.isSwitchMap = False
+            pygame.time.delay(100)
+            
+        else:
         #update map => background, link switch map
-        if self.is_staying_in_startMap:
-            backdrop= self.START_MAP.update()
-            self.WORLD.blit(backdrop, self.backdropbox)
-            for switch in self.START_MAP.LIST_SWITCH:
-                self.WORLD.blit(switch.SWITCH_IMG, (switch.x, switch.y))
+            if self.is_staying_in_startMap:
+                backdrop = self.START_MAP.update()
+                self.WORLD.blit(backdrop, self.backdropbox)
+                for switch in self.START_MAP.LIST_SWITCH:
+                
+                    self.WORLD.blit(switch.SWITCH_IMG_Dungeon, (switch.x, switch.y))
         
-        else: # Đang ở map đánh quái
-            backdrop = self.MAP.update()
-            self.WORLD.blit(backdrop, self.backdropbox)
-            if len(self.MONSTERs) <= 0 and len(self.MAP.LIST_SWITCH) <= 0:
-                self.MAP.createSwitch()
-            for switch in self.MAP.LIST_SWITCH:
-                self.WORLD.blit(switch.SWITCH_IMG, (switch.x, switch.y))
+            else: # Đang ở map đánh quái
+                backdrop = self.MAP.update()
+                self.WORLD.blit(backdrop, self.backdropbox)
+                if len(self.MONSTERs) <= 0 and len(self.MAP.LIST_SWITCH) <= 0:
+                    self.MAP.createSwitch()
+                for switch in self.MAP.LIST_SWITCH:
+                    self.WORLD.blit(switch.SWITCH_IMG_Exit, (switch.x, switch.y))
             
 
         #update player => player.rect
-        self.PLAYER.update()
-        self.MONSTERs.update()
+            self.PLAYER.update()
+            self.MONSTERs.update(self.PLAYER.rect.x, self.PLAYER.rect.y)
         
-        
-        self.impact()
-        #draw player
-        #self.WORLD.blit(self.PLAYER.image, self.PLAYER.rect)
-        self.PLAYERs.draw(self.WORLD)
-        self.MONSTERs.draw(self.WORLD)
-        pygame.time.delay(20)
+            self.impact()
+            self.PLAYERs.draw(self.WORLD)
+            self.MONSTERs.draw(self.WORLD)
+            pygame.time.delay(10)
         
         #update new screena
         pygame.display.flip()
         self.clock.tick(FPS)
 
     def create_newPlayer(self):
-        pygame.time.set_timer(self.goku_stop, 100)
+        pygame.time.set_timer(self.goku_stop, 150)
         self.PLAYER = Player("assets/img/goku01.png", [100, 100])
         self.PLAYER.rect.x = PLAYER_START_POS['x']  # go to x
         self.PLAYER.rect.y = PLAYER_START_POS['y']  # go to y
@@ -209,7 +219,7 @@ class Program:
     def create_Monster(self, x, y):
         self.MONSTER = Monster("assets/img/Bear01.png", [x, y])
         self.MONSTERs.add(self.MONSTER)
-        self.MONSTER.update()
+        self.MONSTER.update(self.PLAYER.rect.x, self.PLAYER.rect.x)
 
     def impact(self):
         for monster in self.MONSTERs:
@@ -218,7 +228,12 @@ class Program:
                     monster.kill()
                 else:
                     self.PLAYER.hp -= 1
-
+    
+       
+        
+        
+        
+   
 
 
 # import os

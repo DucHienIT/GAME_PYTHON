@@ -29,4 +29,26 @@ PLAYER_START_POS = {
 ANIMATION = 4
 
 # Tốc độ di chuyển
-DEFAULT_STEPS = 10
+DEFAULT_STEPS = 7
+
+list_Image = []
+loadGame01 = pygame.transform.scale(pygame.image.load('./assets/img/loadGame_01.png'), (WORLD_X, WORLD_Y))
+loadGame02 = pygame.transform.scale(pygame.image.load('./assets/img/loadGame_02.png'), (WORLD_X, WORLD_Y))
+loadGame03 = pygame.transform.scale(pygame.image.load('./assets/img/loadGame_03.png'), (WORLD_X, WORLD_Y))
+list_Image.append(loadGame01)
+list_Image.append(loadGame02)
+list_Image.append(loadGame03)
+list_Image.append(loadGame01)
+list_Image.append(loadGame02)
+list_Image.append(loadGame03)
+list_Image.append(loadGame01)
+list_Image.append(loadGame02)
+list_Image.append(loadGame03)
+list_Image.append(loadGame01)
+list_Image.append(loadGame02)
+list_Image.append(loadGame03)
+list_Image.append(loadGame01)
+list_Image.append(loadGame02)
+list_Image.append(loadGame03)
+
+
