@@ -5,7 +5,7 @@ from obj.switch import *
 
 class startMap:
     MAP_IMAGE = pygame.image.load('assets/img/WorldMap.png')
-    MAP_IMAGE = pygame.transform.scale(MAP_IMAGE, (960, 720))
+    MAP_IMAGE = pygame.transform.scale(MAP_IMAGE, (WORLD_X, WORLD_Y))
     LIST_SWITCH = []
 
     def __init__(self):

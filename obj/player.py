@@ -12,7 +12,8 @@ class Player(pygame.sprite.Sprite):
         self.movey = 0
         self.frame = 0
 
-        self.hp = 100
+        self.hp = HP
+        self.mp = MP
 
         self.right = True
         self.images = []
@@ -168,7 +169,7 @@ class Player(pygame.sprite.Sprite):
         if self.hp <= 0:
             self.rect.x = 500
             self.rect.y = 500
-            self.hp = 100
+            self.hp = HP
 
         if (self.isMovableX(self.movex)):
             self.rect.x = self.rect.x + self.movex

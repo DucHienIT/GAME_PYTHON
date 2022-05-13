@@ -22,11 +22,11 @@ class Program:
         self.clock = pygame.time.Clock()
         self.PLAYERs = pygame.sprite.Group()
         self.MONSTERs = pygame.sprite.Group()
-
+        
         self.i = 0
         # New Value By Hien
         self.goku_stop = pygame.USEREVENT + 1
- 
+        self.MonsterInDisplay = False
         # Cờ chỉ vị trí đang đứng (start map hay phòng đánh quái)
         self.is_staying_in_startMap = True
 
@@ -42,7 +42,10 @@ class Program:
 
     def startProcess(self):
         pygame.init()
-        self.WORLD = pygame.display.set_mode((WORLD_X, WORLD_Y))    
+        self.WORLD = pygame.display.set_mode((WORLD_X, WORLD_Y))  
+         
+        # pygame.display.get_caption("Dragon Boy Advertune", "Game") 
+
         self.backdropbox = self.WORLD.get_rect()
         
     
@@ -55,9 +58,12 @@ class Program:
             if event.type == pygame.QUIT:
                 return False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.PLAYER.isAttack = True
-                self.PLAYER.comboCount += 1
-                self.PLAYER.animationAttack()
+                
+                if self.PLAYER.mp >= 10:
+                    self.PLAYER.isAttack = True
+                    self.PLAYER.animationAttack()
+                    self.PLAYER.mp -= 10
+                    self.PLAYER.comboCount += 1
             
 
             if event.type == pygame.KEYDOWN:
@@ -111,16 +117,23 @@ class Program:
                 self.PLAYER.isRun = False
             
             if event.type == self.goku_stop:
+                
                 if self.PLAYER.isAttack == False:
                     if self.PLAYER.isRun == False:
                         self.PLAYER.animationStop()
                         self.PLAYER.isAttack = False
                         self.PLAYER.comboCount = 0
+                        if self.PLAYER.mp < MP:
+                            self.PLAYER.mp += 1
                     else:
                         self.PLAYER.animationRun()
             
                 else:
                     self.PLAYER.animationAttack()
+                if self.MonsterInDisplay:
+                    for monster in self.MONSTERs:
+                        monster.animationRun()
+                        
         return True
 
     def is_player_in_area(self, corn1, corn2):
@@ -151,14 +164,18 @@ class Program:
                     del self.MAP
                     self.MAP = map('HOME')
                     self.create_ListMonster(randint(1,5))
+                    self.MonsterInDisplay = True
                     self.is_staying_in_startMap = False  
                 else:  # Nếu đang trong phòng đánh quái
                     self.is_staying_in_startMap = True
+                    
                 c_map.removeSwitch(switch)
         del c_map 
      
     def update(self):
         #check switch map -> new map, player.new position
+
+        
         self.switchMap()
         if self.isSwitchMap == True:
             
@@ -189,6 +206,7 @@ class Program:
             
 
         #update player => player.rect
+            self.infoCharaterUpdate()
             self.PLAYER.update()
             self.MONSTERs.update(self.PLAYER.rect.x, self.PLAYER.rect.y)
         
@@ -217,28 +235,38 @@ class Program:
                 self.create_Monster(new_posX, new_posY)
 
     def create_Monster(self, x, y):
-        self.MONSTER = Monster("assets/img/Bear01.png", [x, y])
-        self.MONSTERs.add(self.MONSTER)
+        self.MONSTER = Monster(MaracaListImageAttach[0], [x, y])
         self.MONSTER.update(self.PLAYER.rect.x, self.PLAYER.rect.x)
+        self.MONSTER.inDisplay = True
+        self.MONSTERs.add(self.MONSTER)
+        
 
     def impact(self):
+        
         for monster in self.MONSTERs:
             if (pygame.sprite.collide_rect(self.PLAYER, monster)):
                 if self.PLAYER.isAttack == True:
                     monster.kill()
-                else:
-                    self.PLAYER.hp -= 1
-    
+                elif monster.Run_Index in [7, 8]:
+                    self.PLAYER.hp -= 100
+            
        
-        
-        
+    def infoCharaterUpdate(self):
+
+        Hp_Ba = pygame.transform.scale(Hp_Bar, (300*(self.PLAYER.hp)/HP, 125))
+        Mp_Ba = pygame.transform.scale(Mp_Bar, (300*(self.PLAYER.mp)/MP, 125))
+        self.WORLD.blit(Info_Charater, (0, 0))
+        self.WORLD.blit(Hp_Ba, (99, 8))
+        self.WORLD.blit(Mp_Ba, (110, 23))
+
+
         
    
 
 
 # import os
 # print(os.listdir("./assets/img"))
-process = Program()
-process.startProcess()
-process.main()
-process.endProcess()
+# process = Program()
+# process.startProcess()
+# process.main()
+# process.endProcess()

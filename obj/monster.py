@@ -1,3 +1,4 @@
+from matplotlib import animation
 import pygame
 from obj.define import *
 from obj.map import *
@@ -7,17 +8,18 @@ class Monster(pygame.sprite.Sprite):
     steps = DEFAULT_STEPS
 
     clock = pygame.time.Clock()
-    def __init__(self, path, position):
+    def __init__(self, Image, position):
         pygame.sprite.Sprite.__init__(self)
         self.movex = 0
         self.movey = 0
         self.frame = 0
-        
+        self.inDisplay = False
+        self.Run_Index = 0
         list_tmp = [True, False, True, False]
         self.right = random.choice(list_tmp)
 
         self.images = []
-        img = pygame.image.load(path)
+        img = Image
         img = pygame.transform.scale(img, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
 
         if self.right == False:
@@ -61,9 +63,22 @@ class Monster(pygame.sprite.Sprite):
         if self.rect.y + y < 0 or self.rect.y + y > WORLD_Y - PLAYER_SIZE_Y:
             return False
         return True    
+    
+    def animationRun(self):
+        self.isRun = True
+        if self.Run_Index < 8:
+            self.Run_Index += 1
+        else:
+            self.Run_Index = 0
+
+        new_Image = MaracaListImageAttach[self.Run_Index]
+        self.image = pygame.transform.scale(new_Image, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
+       
+        if self.right == False:
+            self.image = pygame.transform.flip(self.image, True, False)
         
     def update(self, pos_PlayerX, pos_PlayerY):
-
+        
         if self.rect.x < pos_PlayerX:
             self.movex = 2
         elif self.rect.x > pos_PlayerX:
