@@ -6,6 +6,7 @@ from obj.map import *
 from obj.player import *
 from obj.monster import *
 from obj.start_map import *
+from obj.PlaySound import *
 import random
 
 
@@ -18,6 +19,7 @@ class Program:
         self.START_MAP = startMap()
         self.MAP = None
 
+        self.sound = Sound()
         self.isSwitchMap = False
         self.clock = pygame.time.Clock()
         self.PLAYERs = pygame.sprite.Group()
@@ -35,7 +37,7 @@ class Program:
 
     def main(self): 
         self.create_newPlayer()
-        
+        self.sound.__Play__Intro__(-1)
         while self.active:
             self.active = self.checkEvent()
             self.update()
@@ -64,6 +66,7 @@ class Program:
                     self.PLAYER.animationAttack()
                     self.PLAYER.mp -= 10
                     self.PLAYER.comboCount += 1
+                    self.sound.__Play__Attack__(0)
             
 
             if event.type == pygame.KEYDOWN:
@@ -193,7 +196,6 @@ class Program:
                 backdrop = self.START_MAP.update()
                 self.WORLD.blit(backdrop, self.backdropbox)
                 for switch in self.START_MAP.LIST_SWITCH:
-                
                     self.WORLD.blit(switch.SWITCH_IMG_Dungeon, (switch.x, switch.y))
         
             else: # Đang ở map đánh quái
@@ -208,10 +210,10 @@ class Program:
         #update player => player.rect
             self.infoCharaterUpdate()
             self.PLAYER.update()
-            self.MONSTERs.update(self.PLAYER.rect.x, self.PLAYER.rect.y)
+            self.MONSTERs.update(self.PLAYER.rect.centerx, self.PLAYER.rect.centery)
         
             self.impact()
-            self.PLAYERs.draw(self.WORLD)
+            self.PLAYERs.draw(self.WORLD) 
             self.MONSTERs.draw(self.WORLD)
             pygame.time.delay(10)
         
@@ -246,27 +248,39 @@ class Program:
         for monster in self.MONSTERs:
             if (pygame.sprite.collide_rect(self.PLAYER, monster)):
                 if self.PLAYER.isAttack == True:
-                    monster.kill()
+                    self.sound.__Play__Collision__(0)
+                    monster.hp -= self.PLAYER.atk
+                    if monster.hp <= 0:
+                        monster.kill()
+                        self.PLAYER.exp += 100
                 elif monster.Run_Index in [7, 8]:
                     self.PLAYER.hp -= 100
-            
+                    monster.movex = 0
+                    monster.movey = 0
        
     def infoCharaterUpdate(self):
+        Font = pygame.font.Font("assets/img/font.ttf", 45)
+        OPTIONS_TEXT = Font.render("LV " + str(self.PLAYER.level), True, "Blue")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(300, 100))
+        self.WORLD.blit(OPTIONS_TEXT, OPTIONS_RECT)
 
-        Hp_Ba = pygame.transform.scale(Hp_Bar, (300*(self.PLAYER.hp)/HP, 125))
-        Mp_Ba = pygame.transform.scale(Mp_Bar, (300*(self.PLAYER.mp)/MP, 125))
+        Hp_Ba = pygame.transform.scale(Hp_Bar, (450*(self.PLAYER.hp)/HP, 125*1.5))
+        Mp_Ba = pygame.transform.scale(Mp_Bar, (450*(self.PLAYER.mp)/MP, 125*1.5))
+        EXP_Ba = pygame.transform.scale(Exp_Bar, (415*(self.PLAYER.exp/listExpUpLevel[self.PLAYER.level-1]), 125))
+        
         self.WORLD.blit(Info_Charater, (0, 0))
-        self.WORLD.blit(Hp_Ba, (99, 8))
-        self.WORLD.blit(Mp_Ba, (110, 23))
+        self.WORLD.blit(Hp_Ba, (149, 12))
+        self.WORLD.blit(Mp_Ba, (165, 34))
+        self.WORLD.blit(EXP_Ba, (170, 57))
 
 
         
    
 
 
-# import os
-# print(os.listdir("./assets/img"))
-# process = Program()
-# process.startProcess()
-# process.main()
-# process.endProcess()
+import os
+print(os.listdir("./assets/img"))
+process = Program()
+process.startProcess()
+process.main()
+process.endProcess()

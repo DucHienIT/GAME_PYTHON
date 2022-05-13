@@ -1,3 +1,4 @@
+from telnetlib import SE
 import pygame
 from sympy import false
 from obj.define import *
@@ -11,9 +12,13 @@ class Player(pygame.sprite.Sprite):
         self.movex = 0
         self.movey = 0
         self.frame = 0
-
+        self.level = 1
+        self.exp = 0
         self.hp = HP
         self.mp = MP
+        self.atk = ATK
+        self.DEF = 10
+        
 
         self.right = True
         self.images = []
@@ -189,6 +194,10 @@ class Player(pygame.sprite.Sprite):
             if self.right == False:
                 self.image = pygame.transform.flip(self.image, True, False)
                 self.right = True
+        
+        if self.exp >= listExpUpLevel[self.level - 1]:
+            self.exp = 0
+            self.level += 1
 
 
         

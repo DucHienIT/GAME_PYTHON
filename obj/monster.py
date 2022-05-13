@@ -14,6 +14,7 @@ class Monster(pygame.sprite.Sprite):
         self.movey = 0
         self.frame = 0
         self.inDisplay = False
+        self.hp = 100
         self.Run_Index = 0
         list_tmp = [True, False, True, False]
         self.right = random.choice(list_tmp)
@@ -69,7 +70,7 @@ class Monster(pygame.sprite.Sprite):
         if self.Run_Index < 8:
             self.Run_Index += 1
         else:
-            self.Run_Index = 0
+            self.Run_Index = 0  
 
         new_Image = MaracaListImageAttach[self.Run_Index]
         self.image = pygame.transform.scale(new_Image, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
@@ -79,16 +80,16 @@ class Monster(pygame.sprite.Sprite):
         
     def update(self, pos_PlayerX, pos_PlayerY):
         
-        if self.rect.x < pos_PlayerX:
+        if self.rect.centerx < pos_PlayerX - PLAYER_SIZE_X/2 :
             self.movex = 2
-        elif self.rect.x > pos_PlayerX:
+        elif self.rect.centerx > pos_PlayerX  + PLAYER_SIZE_X/2:
             self.movex = -2
         else:
             self.movex = 0
 
-        if self.rect.y < pos_PlayerY:
+        if self.rect.centery < pos_PlayerY :
             self.movey = 2
-        elif self.rect.y > pos_PlayerY:
+        elif self.rect.centery > pos_PlayerY:
             self.movey = -2
         else:
             self.movey = 0

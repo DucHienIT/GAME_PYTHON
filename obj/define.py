@@ -6,7 +6,10 @@ WORLD_Y = GetSystemMetrics(1)
 
 # Tốc độ khung hình
 FPS = 60
+listExpUpLevel = [i*100 for i in range(1, 100)]
 
+
+listExpUpLevel.append(999999999)
 # Một số màu
 BLUE = (25, 25, 200)
 BLACK = (23, 23, 23)
@@ -30,13 +33,15 @@ PLAYER_START_POS = {
 ANIMATION = 4
 HP = 10000
 MP = 100
+ATK = 10
 # Tốc độ di chuyển
 DEFAULT_STEPS = 7
 
 
-Info_Charater = pygame.image.load('./assets/img/Info_Charater.png')
+Info_Charater = pygame.transform.scale(pygame.image.load('./assets/img/Info_Charater.png'), (286*1.5, 113*1.5))
 Hp_Bar = pygame.image.load('./assets/img/HP_Bar.png')
 Mp_Bar = pygame.image.load('./assets/img/Mana_Bar.png')
+Exp_Bar = pygame.image.load("./assets/img/EXP_Bar.png")
 #Load image
 list_Image = []
 loadGame01 = pygame.transform.scale(pygame.image.load('./assets/img/loadGame_01.png'), (WORLD_X, WORLD_Y))
