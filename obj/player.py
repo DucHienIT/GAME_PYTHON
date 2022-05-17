@@ -1,4 +1,4 @@
-from telnetlib import SE
+import string
 import pygame
 from sympy import false
 from obj.define import *
@@ -7,17 +7,23 @@ class Player(pygame.sprite.Sprite):
     steps = DEFAULT_STEPS
 
     clock = pygame.time.Clock()
-    def __init__(self, path, position):
+    def __init__(self, path, info):
         pygame.sprite.Sprite.__init__(self)
         self.movex = 0
         self.movey = 0
         self.frame = 0
-        self.level = 1
-        self.exp = 0
-        self.hp = HP
-        self.mp = MP
-        self.atk = ATK
-        self.DEF = 10
+        self.hp = info[0]
+        self.mp = info[1]
+        self.atk = info[2]
+        self.DEF = info[3]
+        self.exp = info[4]
+        self.level = info[5]
+
+        self.max_hp = info[0]
+        self.max_mp = info[1]
+        self.max_atk = info[2]
+        self.max_DEF = info[3]
+        self.max_exp = info[self.level-1]
         
 
         self.right = True
@@ -40,7 +46,7 @@ class Player(pygame.sprite.Sprite):
         img.convert_alpha()  # optimise alpha
         img.set_colorkey(ALPHA)  # set alpha
         self.image = img
-        self.rect = self.image.get_rect(center = (position[0], position[1]))
+        self.rect = self.image.get_rect(center = (info[6], info[7]))
 
         # Image Stop
         self.AddImage("./assets/img/goku01.png", 3)
@@ -170,6 +176,12 @@ class Player(pygame.sprite.Sprite):
         if self.right == False:
             self.image = pygame.transform.flip(self.image, True, False)
 
+    def savePlayer(self):
+        string = f'{self.hp} {self.mp} {self.atk} {self.DEF} {self.exp} {self.level} {self.rect[0]} {self.rect[1]}'
+        f = open("./assets/data/player.txt", "w")
+        f.write(string)
+        f.close()
+
     def update(self):
         if self.hp <= 0:
             self.rect.x = 500
@@ -198,6 +210,12 @@ class Player(pygame.sprite.Sprite):
         if self.exp >= listExpUpLevel[self.level - 1]:
             self.exp = 0
             self.level += 1
+            self.hp = self.max_hp
+
+        if self.hp <= HP:
+            self.hp += (0.0005*HP)
+        if self.mp <= MP:
+            self.mp += (0.01*MP)
 
 
         

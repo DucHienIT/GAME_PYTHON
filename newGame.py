@@ -1,5 +1,3 @@
-from json import load
-from time import time
 import pygame
 from obj.define import *
 from obj.map import *
@@ -8,8 +6,6 @@ from obj.monster import *
 from obj.start_map import *
 from obj.PlaySound import *
 import random
-
-
 
 class Program:
     def __init__(self):
@@ -36,23 +32,32 @@ class Program:
         self.__key_manager__ = 0
 
     def main(self): 
-        self.create_newPlayer()
         self.sound.__Play__Intro__(-1)
+        self.loadPlayer()
         while self.active:
-            self.active = self.checkEvent()
+            self.active = self.checkEvent()    
             self.update()
 
     def startProcess(self):
         pygame.init()
         self.WORLD = pygame.display.set_mode((WORLD_X, WORLD_Y))  
-         
-        # pygame.display.get_caption("Dragon Boy Advertune", "Game") 
-
+        pygame.display.set_caption("Dragon Boy Advertune", "Game") 
         self.backdropbox = self.WORLD.get_rect()
-        
-    
+        self.isSwitchMap = True
 
     def endProcess(self):
+        self.saveInfo()
+        f = open('./assets/data/continue.txt', 'w')
+        if self.PLAYER.hp <= 0:
+            f.write('0')
+        else:
+            f.write('1')
+        f.close()
+
+
+        while self.i < 10:
+            self.loading()
+            pygame.display.flip()
         pygame.quit()
 
     def checkEvent(self):
@@ -60,14 +65,12 @@ class Program:
             if event.type == pygame.QUIT:
                 return False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                
                 if self.PLAYER.mp >= 10:
                     self.PLAYER.isAttack = True
                     self.PLAYER.animationAttack()
                     self.PLAYER.mp -= 10
                     self.PLAYER.comboCount += 1
                     self.sound.__Play__Attack__(0)
-            
 
             if event.type == pygame.KEYDOWN:
                 if event.key == ord('q'):
@@ -126,8 +129,6 @@ class Program:
                         self.PLAYER.animationStop()
                         self.PLAYER.isAttack = False
                         self.PLAYER.comboCount = 0
-                        if self.PLAYER.mp < MP:
-                            self.PLAYER.mp += 1
                     else:
                         self.PLAYER.animationRun()
             
@@ -166,7 +167,7 @@ class Program:
                     
                     del self.MAP
                     self.MAP = map('HOME')
-                    self.create_ListMonster(randint(1,5))
+                    self.create_ListMonster(randint(4,10))
                     self.MonsterInDisplay = True
                     self.is_staying_in_startMap = False  
                 else:  # Nếu đang trong phòng đánh quái
@@ -177,19 +178,9 @@ class Program:
      
     def update(self):
         #check switch map -> new map, player.new position
-
-        
         self.switchMap()
         if self.isSwitchMap == True:
-            
-            self.WORLD.blit(list_Image[self.i], self.backdropbox)
-            if self.i < 10:
-                self.i += 1
-            else:
-                self.i = 0
-                self.isSwitchMap = False
-            pygame.time.delay(100)
-            
+            self.loading()
         else:
         #update map => background, link switch map
             if self.is_staying_in_startMap:
@@ -221,11 +212,36 @@ class Program:
         pygame.display.flip()
         self.clock.tick(FPS)
 
-    def create_newPlayer(self):
+    def loading(self):
+        self.WORLD.blit(list_Image[self.i], self.backdropbox)
+        if self.i < 10:
+            self.i += 1
+        else:
+            self.i = 0
+            self.isSwitchMap = False
+        pygame.time.delay(75)
+
+    def newPlayer(self):
+        string = f'{HP} {MP} {ATK} {10} {0} {1} {PLAYER_START_POS["x"]} {PLAYER_START_POS["y"]}'
+        f = open("./assets/data/player.txt", "w")
+        f.write(string)
+        f.close()    
+
+    def loadPlayer(self): 
+        f = open("./assets/data/player.txt", "r")
+        string = f.read()
+        f.close()
+        '''
+        string:
+        hp mp atk def exp level pos_x pos_y
+        '''
+        string = string.split(" ")
+        info = []
+        for i in string:
+            info.append(int(i))
+
         pygame.time.set_timer(self.goku_stop, 150)
-        self.PLAYER = Player("assets/img/goku01.png", [100, 100])
-        self.PLAYER.rect.x = PLAYER_START_POS['x']  # go to x
-        self.PLAYER.rect.y = PLAYER_START_POS['y']  # go to y
+        self.PLAYER = Player("assets/img/goku01.png", info)
         self.PLAYERs.add(self.PLAYER)
 
     def create_ListMonster(self, total):
@@ -255,6 +271,8 @@ class Program:
                         self.PLAYER.exp += 100
                 elif monster.Run_Index in [7, 8]:
                     self.PLAYER.hp -= 100
+                    if self.PLAYER.hp <= 0: 
+                        self.active = False
                     monster.movex = 0
                     monster.movey = 0
        
@@ -273,14 +291,8 @@ class Program:
         self.WORLD.blit(Mp_Ba, (165, 34))
         self.WORLD.blit(EXP_Ba, (170, 57))
 
-
-        
-   
-
-
-import os
-print(os.listdir("./assets/img"))
-process = Program()
-process.startProcess()
-process.main()
-process.endProcess()
+    def saveInfo(self):
+        # save player
+        self.PLAYER.savePlayer()
+        # save switch
+        self.START_MAP.saveSwitch(self.START_MAP.LIST_SWITCH)
