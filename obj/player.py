@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.DEF = info[3]
         self.exp = info[4]
         self.level = info[5]
-
+        self.freeValue = 0 # chỉ số tự do người chơi cộng vào các thuộc tính
         self.max_hp = info[0]
         self.max_mp = info[1]
         self.max_atk = info[2]
@@ -177,7 +177,7 @@ class Player(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
 
     def savePlayer(self):
-        string = f'{self.hp} {self.mp} {self.atk} {self.DEF} {self.exp} {self.level} {self.rect[0]} {self.rect[1]}'
+        string = f'{int(self.hp)} {int(self.mp)} {int(self.atk)} {int(self.DEF)} {int(self.exp)} {int(self.level)} {int(self.rect[0])} {int(self.rect[1])}'
         f = open("./assets/data/player.txt", "w")
         f.write(string)
         f.close()
@@ -211,6 +211,7 @@ class Player(pygame.sprite.Sprite):
             self.exp = 0
             self.level += 1
             self.hp = self.max_hp
+            self.freeValue += 5
 
         if self.hp <= HP:
             self.hp += (0.0005*HP)

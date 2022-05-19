@@ -35,14 +35,14 @@ PLAYER_START_POS = {
 
 # key animation
 ANIMATION = 4
-HP = 10000
+HP = 1000
 MP = 100
 ATK = 10
 # Tốc độ di chuyển
 DEFAULT_STEPS = 7
 
-
 Info_Charater = pygame.transform.scale(pygame.image.load('./assets/img/Info_Charater.png'), (286*1.5, 113*1.5))
+Info_Charater_Rect = Info_Charater.get_rect(center = (286*1.5, 113*1.5))
 Hp_Bar = pygame.image.load('./assets/img/HP_Bar.png')
 Mp_Bar = pygame.image.load('./assets/img/Mana_Bar.png')
 Exp_Bar = pygame.image.load("./assets/img/EXP_Bar.png")
@@ -74,3 +74,7 @@ for i in range (1, 10):
     strImage = "./assets/img/Maraca0" + str(i) + ".png"
     tmp = pygame.image.load(strImage)
     MaracaListImageAttach.append(tmp)
+def checkForInput(position):
+	if position[0] in range(Info_Charater_Rect.left, Info_Charater_Rect.right) and position[1] in range(Info_Charater_Rect.top, Info_Charater_Rect.bottom):
+		return True
+	return False

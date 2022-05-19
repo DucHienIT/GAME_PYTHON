@@ -41,7 +41,6 @@ def continue_(SCREEN, type):
 
             CONTINUE_BACK.changeColor(CONTINUE_MOUSE_POS)
             CONTINUE_BACK.update(SCREEN)
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -73,7 +72,7 @@ def main_menu():
                             text_input="CONTINUE", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
         QUIT_BUTTON = Button(image=pygame.image.load("./assets/img/Quit Rect.png"), pos=(WORLD_X/2, 650), 
                             text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
-
+        
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         for button in [PLAY_BUTTON, CONTINUE_BUTTON, QUIT_BUTTON]:

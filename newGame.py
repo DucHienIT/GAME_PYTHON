@@ -5,6 +5,7 @@ from obj.player import *
 from obj.monster import *
 from obj.start_map import *
 from obj.PlaySound import *
+from obj.button import *
 import random
 
 class Program:
@@ -14,13 +15,14 @@ class Program:
 
         self.START_MAP = startMap()
         self.MAP = None
-
+        
         self.sound = Sound()
         self.isSwitchMap = False
         self.clock = pygame.time.Clock()
         self.PLAYERs = pygame.sprite.Group()
         self.MONSTERs = pygame.sprite.Group()
-        
+        self.rect_BG_X = 0
+        self.rect_BG_Y = 0
         self.i = 0
         # New Value By Hien
         self.goku_stop = pygame.USEREVENT + 1
@@ -95,6 +97,8 @@ class Program:
                     self.PLAYER.isAttack = False
                     self.PLAYER.animationRun()
                     self.__key_manager__ += 1
+                if  event.key == ord('c'):
+                    self.click_InfoPlayer()
 
 
             if event.type == pygame.KEYUP:
@@ -140,12 +144,19 @@ class Program:
                         
         return True
 
-    def is_player_in_area(self, corn1, corn2):
+    def is_player_in_area(self, row, col):
         
+        x = self.rect_BG_X - self.PLAYER.rect.centerx
+        y = self.rect_BG_Y - self.PLAYER.rect.centery
+        if (row[0] >  x > row[1]):
+            if (col[0] > y > col[1] ):
+                return True
+        return False
+    def is_player_in_exit(self):
         x = self.PLAYER.rect.centerx
         y = self.PLAYER.rect.centery
-        if (corn1[0] < x and x < corn2[0]):
-            if (corn1[1] < y and y < corn2[1] ):
+        if (WORLD_X/2 <  x < WORLD_X/2 + 50):
+            if (800 < y < 850 ):
                 return True
         return False
 
@@ -160,7 +171,7 @@ class Program:
         # Nếu đặt chân lên switch thì chuyển map
         for switch in c_map.LIST_SWITCH:
             # Nếu đặt chân lên switch
-            if self.is_player_in_area((switch.x, switch.y), (switch.x + SWITCH_SIZE, switch.y+SWITCH_SIZE)): 
+            if self.is_player_in_area((switch.x, switch.y), (switch.z, switch.t)): 
                 self.isSwitchMap = True   
                 #Nếu đang ở start map
                 if self.is_staying_in_startMap:
@@ -170,10 +181,15 @@ class Program:
                     self.create_ListMonster(randint(4,10))
                     self.MonsterInDisplay = True
                     self.is_staying_in_startMap = False  
-                else:  # Nếu đang trong phòng đánh quái
-                    self.is_staying_in_startMap = True
-                    
+                
                 c_map.removeSwitch(switch)
+            if self.is_player_in_exit() and self.is_staying_in_startMap == False:  # Nếu đang trong phòng đánh quái
+                self.isSwitchMap = True  
+                self.is_staying_in_startMap = True
+                c_map.removeSwitch(switch)    
+                
+                    
+                
         del c_map 
      
     def update(self):
@@ -185,9 +201,13 @@ class Program:
         #update map => background, link switch map
             if self.is_staying_in_startMap:
                 backdrop = self.START_MAP.update()
-                self.WORLD.blit(backdrop, self.backdropbox)
-                for switch in self.START_MAP.LIST_SWITCH:
-                    self.WORLD.blit(switch.SWITCH_IMG_Dungeon, (switch.x, switch.y))
+               
+                if -3073 < self.rect_BG_X - self.PLAYER.movex <= 0 and -1722 < self.rect_BG_Y - self.PLAYER.movey <= 0:
+                    self.rect_BG_X -= self.PLAYER.movex
+                    self.rect_BG_Y -= self.PLAYER.movey
+                self.WORLD.blit(backdrop, (self.rect_BG_X, self.rect_BG_Y))
+
+            
         
             else: # Đang ở map đánh quái
                 backdrop = self.MAP.update()
@@ -195,7 +215,7 @@ class Program:
                 if len(self.MONSTERs) <= 0 and len(self.MAP.LIST_SWITCH) <= 0:
                     self.MAP.createSwitch()
                 for switch in self.MAP.LIST_SWITCH:
-                    self.WORLD.blit(switch.SWITCH_IMG_Exit, (switch.x, switch.y))
+                    self.WORLD.blit(switch.SWITCH_IMG_Exit, (WORLD_X/2, 800))
             
 
         #update player => player.rect
@@ -296,3 +316,120 @@ class Program:
         self.PLAYER.savePlayer()
         # save switch
         self.START_MAP.saveSwitch(self.START_MAP.LIST_SWITCH)
+    
+    def click_InfoPlayer(self):
+
+        
+        def get_font(size): # Returns Press-Start-2P in the desired size
+            return pygame.font.Font("assets/img/font.ttf", size)
+        while True:
+            MOUSE_POS = pygame.mouse.get_pos()
+
+            self.WORLD.blit(pygame.transform.scale(pygame.image.load("./assets/img/BG_Info_Player02.png"), (WORLD_X, WORLD_Y)), (0, 0))
+            
+
+            TEXT = get_font(60).render("Charater Info", True, "White")
+            OPTIONS_RECT = TEXT.get_rect(center=(720, 80))
+            self.WORLD.blit(TEXT, OPTIONS_RECT)
+
+            ATK_TEXT = Button(image=None, pos=(1155, 190), text_input="ATK", font=get_font(30), base_color="Black", hovering_color="Green")
+            ATK_TEXT.update(self.WORLD)
+            DEF_TEXT = Button(image=None, pos=(1155,WORLD_Y - 130), text_input="DEF", font=get_font(30), base_color="Black", hovering_color="Green")
+            DEF_TEXT.update(self.WORLD)
+            HP_TEXT = Button(image=None, pos=(870, WORLD_Y/2 + 30), text_input="HP", font=get_font(30), base_color="Black", hovering_color="Green")
+            HP_TEXT.update(self.WORLD)
+            MP_TEXT = Button(image=None, pos=(1450, WORLD_Y/2 + 30), text_input="MP", font=get_font(30), base_color="Black", hovering_color="Green")
+            MP_TEXT.update(self.WORLD)
+
+            sumATK_Btn = Button(image=None, pos=(1060, 260), text_input="+", font=get_font(30), base_color="Black", hovering_color="Green")
+            sumATK_Btn.update(self.WORLD)
+            subATK_Btn = Button(image=None, pos=(1240, 260), text_input="-", font=get_font(30), base_color="Black", hovering_color="Green")
+            subATK_Btn.update(self.WORLD)
+
+            sumDEF_Btn = Button(image=None, pos=(1060, WORLD_Y - 220), text_input="+", font=get_font(30), base_color="Black", hovering_color="Green")
+            sumDEF_Btn.update(self.WORLD)
+            subDEF_Btn = Button(image=None, pos=(1240, WORLD_Y - 220), text_input="-", font=get_font(30), base_color="Black", hovering_color="Green")
+            subDEF_Btn.update(self.WORLD)
+
+            sumHP_Btn = Button(image=None, pos=(985, WORLD_Y/2 - 60), text_input="+", font=get_font(30), base_color="Black", hovering_color="Green")
+            sumHP_Btn.update(self.WORLD)
+            subHP_Btn = Button(image=None, pos=(985, WORLD_Y/2 + 100), text_input="-", font=get_font(30), base_color="Black", hovering_color="Green")
+            subHP_Btn.update(self.WORLD)
+            
+            sumMP_Btn = Button(image=None, pos=(1365, WORLD_Y/2 - 60), text_input="+", font=get_font(30), base_color="Black", hovering_color="Green")
+            sumMP_Btn.update(self.WORLD)
+            subMP_Btn = Button(image=None, pos=(1365, WORLD_Y/2 + 100), text_input="-", font=get_font(30), base_color="Black", hovering_color="Green")
+            subMP_Btn.update(self.WORLD)
+
+
+
+            Total_ATK = get_font(20).render(str(self.PLAYER.atk), True, "White")
+            self.WORLD.blit(Total_ATK, (1140, 260))
+            Total_DEF = get_font(20).render(str(self.PLAYER.DEF), True, "White")
+            self.WORLD.blit(Total_DEF, (1140, WORLD_Y - 240))
+            Total_HP = get_font(20).render(str(self.PLAYER.hp), True, "White")
+            self.WORLD.blit(Total_HP, (935, WORLD_Y/2 + 20))
+            Total_MP = get_font(20).render(str(self.PLAYER.mp), True, "White")
+            self.WORLD.blit(Total_MP, (1315, WORLD_Y/2 + 20))
+
+            Total_Free_Value = get_font(20).render(str(self.PLAYER.freeValue), True, "Black")
+            self.WORLD.blit(Total_Free_Value, (1060, WORLD_Y - 90))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN and self.PLAYER.freeValue > 0:
+                    if sumATK_Btn.checkForInput(MOUSE_POS):
+                        self.PLAYER.atk += 1
+                        Total_ATK = get_font(20).render(str(self.PLAYER.atk), True, "White")
+                        self.WORLD.blit(Total_ATK, (1140, 260))
+                        self.PLAYER.freeValue -= 1
+                    if subATK_Btn.checkForInput(MOUSE_POS):
+                        if self.PLAYER.atk > 10:
+                            self.PLAYER.atk -= 1
+                            Total_ATK = get_font(20).render(str(self.PLAYER.atk), True, "White")
+                            self.WORLD.blit(Total_ATK, (1140, 260))
+                            self.PLAYER.freeValue += 1
+                    if sumDEF_Btn.checkForInput(MOUSE_POS):
+                        self.PLAYER.DEF += 1
+                        Total_DEF = get_font(20).render(str(self.PLAYER.DEF), True, "White")
+                        self.WORLD.blit(Total_DEF, (1140, WORLD_Y - 240))
+                        self.PLAYER.freeValue -= 1
+                    if subDEF_Btn.checkForInput(MOUSE_POS):
+                        if self.PLAYER.DEF > 10:
+                            self.PLAYER.DEF -= 1
+                            Total_DEF = get_font(20).render(str(self.PLAYER.DEF), True, "White")
+                            self.WORLD.blit(Total_DEF, (1140, WORLD_Y - 240))
+                            self.PLAYER.freeValue += 1
+
+                    if sumHP_Btn.checkForInput(MOUSE_POS):
+                        self.PLAYER.hp += 100
+                        Total_HP = get_font(20).render(str(self.PLAYER.hp), True, "White")
+                        self.WORLD.blit(Total_HP, (935, WORLD_Y/2 + 20))
+                        self.PLAYER.freeValue -= 1
+                        
+                    if subHP_Btn.checkForInput(MOUSE_POS):
+                        if self.PLAYER.hp > 1000:
+                            self.PLAYER.hp -= 100
+                            Total_HP = get_font(20).render(str(self.PLAYER.hp), True, "White")
+                            self.WORLD.blit(Total_HP, (935, WORLD_Y/2 + 20))
+                            self.PLAYER.freeValue += 1
+                    if sumMP_Btn.checkForInput(MOUSE_POS):
+                        self.PLAYER.mp += 10
+                        Total_MP = get_font(20).render(str(self.PLAYER.mp), True, "White")
+                        self.WORLD.blit(Total_MP, (1315, WORLD_Y/2 + 20))
+                        self.PLAYER.freeValue -= 1
+                    if subMP_Btn.checkForInput(MOUSE_POS):
+                        if self.PLAYER.mp > 100:
+                            self.PLAYER.mp -= 10
+                            Total_MP = get_font(20).render(str(self.PLAYER.mp), True, "White")
+                            self.WORLD.blit(Total_MP, (1315, WORLD_Y/2 + 20))
+                            self.PLAYER.freeValue += 1
+
+                    Total_Free_Value = get_font(20).render(str(self.PLAYER.freeValue), True, "Black")
+                    self.WORLD.blit(Total_Free_Value, (1060, WORLD_Y - 90))
+                if event.type == pygame.KEYDOWN:
+                    if event.key == ord('c'):
+                        return
+ 
+            pygame.display.update()

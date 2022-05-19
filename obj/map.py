@@ -14,7 +14,7 @@ class map:
         
 
     def createSwitch(self):
-        self.LIST_SWITCH.append(switch((WORLD_X-PLAYER_SIZE_X)/2,WORLD_Y-PLAYER_SIZE_Y*2))
+        self.LIST_SWITCH.append(switch((WORLD_X-PLAYER_SIZE_X)/2,WORLD_Y-PLAYER_SIZE_Y*2, 0, 0))
 
     def removeSwitch(self, switch:switch):
         self.LIST_SWITCH.remove(switch)
