@@ -15,14 +15,6 @@ class Sound:
     def __Play__Intro__(self, loop):
         self.Intro_sound.set_volume(0.6)
         self.Intro_sound.play(loops = loop)
-    
-    def __Play__Gameover__(self, loop):
-        self.Gameover_sound.set_volume(0.6)
-        self.Gameover_sound.play(loops = loop)
-
-    def __Play__Battle__(self, loop):
-        self.Battle_sound.set_volume(0.3)
-        self.Battle_sound.play(loops = loop)
 
     def __Play__Attack__(self, loop):
         

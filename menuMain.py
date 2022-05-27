@@ -98,6 +98,6 @@ def main_menu():
                 elif QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
-
+        
         pygame.display.flip()
 main_menu()
