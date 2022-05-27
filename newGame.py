@@ -39,6 +39,8 @@ class Program:
         while self.active:
             self.active = self.checkEvent()    
             self.update()
+            
+
 
     def startProcess(self):
         pygame.init()
@@ -51,16 +53,41 @@ class Program:
         self.saveInfo()
         f = open('./assets/data/continue.txt', 'w')
         if self.PLAYER.hp <= 0:
+            
             f.write('0')
         else:
             f.write('1')
         f.close()
-
-
-        while self.i < 10:
-            self.loading()
-            pygame.display.flip()
+        if self.PLAYER.hp <= 0:
+            self.frmOverGame(0)
+        else:
+            self.frmOverGame(1)
         pygame.quit()
+
+    def frmOverGame(self, flag):
+        myfont = pygame.font.Font("./assets/img/font.ttf", 100)
+        
+        if len(self.START_MAP.LIST_SWITCH) == 0 and flag == 1:
+            label = myfont.render('YOU WIN', True, "#b68f40")
+        elif flag == 0:
+            label = myfont.render('GAME OVER', True, "#b68f40")
+        else: 
+            return
+        label_rect = label.get_rect(center=(WORLD_X/2, WORLD_Y/2))
+        count = 200
+        while count > 0:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return False
+                if event.type == pygame.KEYDOWN:
+                    self.is_start = True
+                    if event.key == ord('q') or event.key == pygame.K_ESCAPE:
+                        return False
+            self.WORLD.fill(BLACK)
+            self.WORLD.blit(label, (label_rect))
+            pygame.display.flip()
+            self.clock.tick(FPS)
+            count -= 1
 
     def checkEvent(self):
         for event in pygame.event.get():
@@ -262,6 +289,7 @@ class Program:
             info.append(int(i))
 
         pygame.time.set_timer(self.goku_stop, 150)
+        
         self.PLAYER = Player("assets/img/goku01.png", info)
         self.PLAYERs.add(self.PLAYER)
 

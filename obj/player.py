@@ -29,7 +29,6 @@ class Player(pygame.sprite.Sprite):
         self.right = True
         self.images = []
         self.imagesRun = []
-        self.imagesJump = []
         self.imagesAttack = []
 
         self.isRun = False
