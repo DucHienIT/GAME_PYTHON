@@ -10,13 +10,14 @@ from obj.start_map import *
 def init():
     pygame.init()
     SCREEN = pygame.display.set_mode((WORLD_X, WORLD_Y))
-    pygame.display.set_caption("Menu")
-    BG = pygame.transform.scale(pygame.image.load("assets/img/Backgound002.gif"), (WORLD_X, WORLD_Y))
+    pygame.display.set_caption("Destroy And Protect")
+    BG = pygame.transform.scale(pygame.image.load("assets/img/Backgound002.jpg"), (WORLD_X, WORLD_Y))
     return SCREEN, BG
 
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font("assets/img/font.ttf", size)
-
+def get_font2(size): # Returns Press-Start-2P in the desired size
+    return pygame.font.Font("assets/img/font2.ttf", size)
 def play():
     game = newGame.Program()
     game.START_MAP.createNewSwitch()
@@ -65,22 +66,22 @@ def main_menu():
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        MENU_TEXT = get_font(100).render("MENU", True, "#b68f40")
+        MENU_TEXT = get_font2(100).render("Destroy And Protect", True, "#F0C61B")
         MENU_RECT = MENU_TEXT.get_rect(center=(WORLD_X/2, 150*u))
-
         PLAY_BUTTON = Button(image=pygame.image.load("./assets/img/Play Rect.png"), pos=(WORLD_X/2, 350*u), 
-                            text_input="PLAY", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                            text_input="PLAY", font=get_font2(100), base_color="#d7fcd4", hovering_color="White")
         CONTINUE_BUTTON = Button(image=pygame.image.load("./assets/img/options Rect.png"), pos=(WORLD_X/2, 500*u), 
-                            text_input="CONTINUE", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                            text_input="CONTINUE", font=get_font2(100), base_color="#d7fcd4", hovering_color="White")
         QUIT_BUTTON = Button(image=pygame.image.load("./assets/img/Quit Rect.png"), pos=(WORLD_X/2, 650), 
-                            text_input="QUIT", font=get_font(75), base_color="#d7fcd4", hovering_color="White")
+                            text_input="QUIT", font=get_font2(100), base_color="#d7fcd4", hovering_color="White")
         
         SCREEN.blit(MENU_TEXT, MENU_RECT)
-
         for button in [PLAY_BUTTON, CONTINUE_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(SCREEN)
         
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

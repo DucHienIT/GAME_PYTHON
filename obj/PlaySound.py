@@ -13,16 +13,16 @@ class Sound:
 
 
     def __Play__Intro__(self, loop):
-        self.Intro_sound.set_volume(0.6)
+        self.Intro_sound.set_volume(0)
         self.Intro_sound.play(loops = loop)
 
     def __Play__Attack__(self, loop):
         
-        self.Attack_sound.set_volume(0.6)
+        self.Attack_sound.set_volume(0)
         self.Attack_sound.play(loops = loop)
 
     def __Play__Collision__(self, loop):
-        self.Collision_sound.set_volume(0.5)
+        self.Collision_sound.set_volume(0)
         self.Collision_sound.play(loops = loop)
         
 
