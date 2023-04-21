@@ -15,14 +15,14 @@ class Monster(pygame.sprite.Sprite):
         self.movey = 0
         self.frame = 0
         self.inDisplay = False
-        self.hp = randint(3, 10) * 200
+        self.hp = randint(3, 10) * 20
         self.Run_Index = 0
         list_tmp = [True, False, True, False]
         self.right = choice(list_tmp)
 
         self.images = []
         img = Image
-        img = pygame.transform.scale(img, (MONSTER_SIZE_X, MONSTER_SIZE_Y))
+        img = pygame.transform.scale(img, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
 
         if self.right == False:
             img = pygame.transform.flip(img, True, False)
@@ -39,7 +39,7 @@ class Monster(pygame.sprite.Sprite):
     def AddImage(self, path, action):
         pygame.sprite.Sprite.__init__(self)
         img = pygame.image.load(path)
-        img = pygame.transform.scale(img, (MONSTER_SIZE_X, MONSTER_SIZE_Y))
+        img = pygame.transform.scale(img, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
         
         img.convert_alpha() 
         img.set_colorkey(ALPHA)
@@ -57,33 +57,33 @@ class Monster(pygame.sprite.Sprite):
         self.movey += y
 
     def isMovableX(self, x):
-        if self.rect.x + x < 0 or self.rect.x + x > WORLD_X - MONSTER_SIZE_X:
+        if self.rect.x + x < 0 or self.rect.x + x > WORLD_X - PLAYER_SIZE_X:
             return False
         return True
     
     def isMovableY(self, y):
-        if self.rect.y + y < 0 or self.rect.y + y > WORLD_Y - MONSTER_SIZE_Y:
+        if self.rect.y + y < 0 or self.rect.y + y > WORLD_Y - PLAYER_SIZE_Y:
             return False
         return True    
     
     def animationRun(self):
         self.isRun = True
-        if self.Run_Index < 32:
+        if self.Run_Index < 8:
             self.Run_Index += 1
         else:
             self.Run_Index = 0  
 
         new_Image = MaracaListImageAttach[self.Run_Index]
-        self.image = pygame.transform.scale(new_Image, (MONSTER_SIZE_X, MONSTER_SIZE_Y))
+        self.image = pygame.transform.scale(new_Image, (PLAYER_SIZE_X, PLAYER_SIZE_Y))
        
         if self.right == False:
             self.image = pygame.transform.flip(self.image, True, False)
         
     def update(self, pos_PlayerX, pos_PlayerY):
         
-        if self.rect.centerx < pos_PlayerX - MONSTER_SIZE_X/2 :
+        if self.rect.centerx < pos_PlayerX - PLAYER_SIZE_X/2 :
             self.movex = 2
-        elif self.rect.centerx > pos_PlayerX  + MONSTER_SIZE_X/2:
+        elif self.rect.centerx > pos_PlayerX  + PLAYER_SIZE_X/2:
             self.movex = -2
         else:
             self.movex = 0

@@ -5,12 +5,8 @@ from obj.switch import *
 
 
 class startMap:
-    indexChapter = 0
-    indexColor = 0
-    MAP_IMAGE = MAP_LIST_IMAGE[indexChapter]
-    
-    
-
+    MAP_IMAGE = pygame.image.load('assets/img/WorldMap02.png')
+    MAP_IMAGE = pygame.transform.scale(MAP_IMAGE, (WORLD_X*3, WORLD_Y*3))
     LIST_SWITCH = []
 
     def __init__(self):
@@ -18,7 +14,12 @@ class startMap:
 
     def createNewSwitch(self):
         self.LIST_SWITCH = [
-                switch(LISTSWITCH[0][0], LISTSWITCH[0][1], LISTSWITCH[0][2], LISTSWITCH[0][3]),
+                switch(-800, -1000, -900, -1100),
+                switch(-1000, -1200, -160, -360),
+                switch(-1600, -1800, -1161, -1361),
+                switch(-3170, -3390, -750, -1000),
+                switch(-2140, -2360, -211, -411),
+                switch(-2075, -2300, -1300, -1500)
             ]
 
     def loadSwitch(self):
@@ -46,13 +47,5 @@ class startMap:
     def update(self):
         return self.MAP_IMAGE
 
-    def ChangeMap(self):
-        self.indexChapter += 1
-        self.indexColor += 1
-        self.MAP_IMAGE = MAP_LIST_IMAGE[self.indexChapter]
-        if self.indexColor > 4:
-            self.indexColor = 0
-        self.LIST_SWITCH.append(switch(LISTSWITCH[self.indexColor][0], LISTSWITCH[self.indexColor][1], LISTSWITCH[self.indexColor][2], LISTSWITCH[self.indexColor][3]))
-
-        
-    
+    def delay_ChangeMap():
+        pass
