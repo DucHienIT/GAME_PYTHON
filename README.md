@@ -16,7 +16,9 @@ To play RPG Adventure 2D Game, you need to have Python 3 installed on your syste
 
 ## How to Play
 
-To start the game, navigate to the project directory in your terminal or command prompt and run the following command:
+To start the game, navigate to the project folder in your terminal or command prompt and run the game.exe file.
+
+
 
 
 Once the game starts, use the arrow keys to move your character and the spacebar to interact with objects. Use the mouse to navigate menus and select items.
@@ -27,12 +29,9 @@ Once the game starts, use the arrow keys to move your character and the spacebar
 - Spacebar: Interact with objects
 - Mouse: Navigate menus and select items
 
+
+
 ## Credits
 
-RPG Adventure 2D Game was developed by [Your Name] as a project for [Course Name]. 
+RPG Adventure 2D Game was developed by Nguyen Duc Hien and Le Quang Tung as a project for Python programming. 
 
-The game assets used in this project were obtained from [source] under the [license] license. 
-
-## License
-
-This project is licensed under the [license] license. See the LICENSE file for details.
