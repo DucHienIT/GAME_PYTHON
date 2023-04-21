@@ -1,4 +1,4 @@
-# 2D adventure RPG
+# Game 2D Adventure RPG
 
 This is a 2D role-playing game (RPG) built in Python using the Pygame library. The game features a hero who must overcome a series of levels, defeat enemies, and collect treasure to finally defeat the final boss.
 
